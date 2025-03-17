@@ -1,0 +1,25 @@
+install.packages("utils")
+install.packages("readr")
+
+library(utils)
+library(readr)
+ # Function to unzip and display CSV data
+unzip_and_display_csv <- function(zip_filepath, csv_filename) {
+  tryCatch({
+    # Create a temporary directory to extract the CSV
+    temp_dir <- tempdir()
+       # Unzip the file
+    unzip(zipfile = zip_filepath, files = csv_filename, exdir = temp_dir)
+       # Construct the full path to the extracted CSV
+    csv_filepath <- file.path(temp_dir, csv_filename)
+      # Read the CSV data
+    data <- read_csv(csv_filepath,locale=readr::locale(encoding = "UTF=8"))
+    # Display the data
+    print(data)
+
+  }, error = function(e) {
+    cat("An error occurred:", e$message, "\n")
+})
+}
+zip_filepath <- "C:/Users/Paul/Nexford/Employee File.zip" #path to zip file.
+csv_filename <- "Employee.csv" #name of csv inside zip file.            
