@@ -1,0 +1,130 @@
+#Importing the necessary libraries for the assignment
+import numpy as np
+import pandas as pd
+#Read the file from the file directory
+salary = pd.read_csv('C:/Users/Paul/Nexford/Total.csv')
+salary.head() #View the first five rows to confrim data has loaded
+#Define the function to allow user input employeename and view details
+def customer_info(data, variable_name, variable_value): 
+    if variable_name not in data.columns: #Error handling in case the variable is not found
+        print(f"Error:Variable '{variable_name}' not found in the dataframe.")
+        return None
+    matching_records = data[data[variable_name]==variable_value] #Check if variable name is equal to the variable value
+    if not matching_records.empty:
+        return matching_records
+    else:
+        print(f"N record found with '{variable_name}' equal to '{variable_name}'.")
+        return None
+result1 = customer_info(salary, 'EmployeeName', 'GARY JIMENEZ') # Testing with one customer to confirm it works
+result1 = customer_info(salary, 'EmployeeName', 'GARY JIM') # Testing with one employee not in the list to display error.
+#converting the file to a dictonary format
+import csv #importing necessary libraries
+def csv_dict(CSV_File_Path): #define our function
+    try: #incorporating error handling
+        with open(CSV_File, 'r', newline = '', encoding ='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            data = list(reader)
+            return data
+    except FileNotFoundError:
+        print(f"Error:CSV file not found at '{CSV_File_Path}'.")
+        return None
+    except Exception as e:
+        print(f"an error occured: {e}")
+        return None
+csv_file = 'C:/Users/Paul/Nexford/Total.csv'
+data_dicts = csv_dict(csv_file)
+data_dicts #Display the data to confirm it has the dictioanry properties
+
+#Below is a repeat case to search an employee record using the dictionary file.
+def customer_info_dict (data, variable_name, variable_value):
+    matching_records=[]
+    if not isinstance(data, list):
+        print("Error: Input data must be a list of dictionaries.")
+        return None
+    
+    for record in data:
+        if not isinstance(record, dict):
+            print("Error: Input data must be a list of dictionaries.")
+            return None
+        if variable_name in record and record[variable_name] == variable_value:
+            matching_records.append(record)
+    if matching_records:
+        if len(matching_records)==1:
+            return matching_records[0]
+        else:
+            return matching_records
+    else:
+        print(f"No record found with '{variable_name}' equal to '{variable_value}'.")
+        return None
+result2 = customer_info_dict(data_dicts,"EmployeeName", "JOE BROWN JR")
+if result2 is not None:
+  print(result2)  
+#Defining the function to write CSV data to file
+def dicts_to_csv(data, csv_file_path):
+#Exports a list of dictionaries to a CSV file.
+#data: The list of dictionaries to export.
+#csv_file_path (str): The path to the output CSV file.
+#Display: bool: True if the export was successful, False otherwise.
+    if not data:
+        print("Error: Input data is empty.")
+        return False
+
+    if not isinstance(data, list) or not all(isinstance(item, dict) for item in data):
+        print("Error: Input data must be a list of dictionaries.")
+        return False
+
+    fieldnames = data[0].keys()  # Get field names from the first dictionary
+    try:
+        with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(data)
+        return True
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return Fals
+csv_file = 'C:/Users/Paul/Nexford/Employee File.csv'
+if dicts_to_csv(data_dicts,csv_file):
+    print(f"Data successfully exported to '{csv_file}'.")
+else:
+    print(f"Data export to '{csv_file}' failed.")
+# writinng a code to write the file to a zip file
+import csv
+import zipfile
+import io
+
+def csv_to_zip(data, filename, zip_filename):
+#Saves CSV data to a zipped folder.
+#data: A list of lists representing the CSV data.
+#filename: The name of the CSV file inside the zip.
+#zip_filename: The name of the zip file to create.
+    try:
+        # Create an in-memory text stream to hold the CSV data.
+        csv_buffer = io.StringIO()
+
+        # Write the data to the CSV buffer.
+        writer = csv.writer(csv_buffer)
+        writer.writerows(data)
+
+        # Create a zip file and add the CSV data.
+        with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            zipf.writestr(filename, csv_buffer.getvalue())
+
+        print(f"CSV data saved to {zip_filename} successfully.")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+data_filepath = "C:/Users/Paul/Nexford/Employee.csv"  # Correct variable name for clarity
+filename = "Employee.csv"
+zip_filename = "C:/Users/Paul/Nexford/Employee File.zip"
+
+try:
+    with open(data_filepath, 'r', newline='', encoding='utf-8') as csvfile: #added encoding.
+        csv_reader = csv.reader(csvfile)
+        data = list(csv_reader)  # Read CSV into a list of lists
+    csv_to_zip(data, filename, zip_filename)
+except FileNotFoundError:
+    print(f"Error: CSV file not found at {data_filepath}")
+except Exception as e:
+    print(f"An error occurred while reading the CSV: {e}")     
